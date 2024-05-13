@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Box Inventory Management{% endblock %}
+
+{% block content %}
+<h2>Manage Box Inventory</h2>
+<form method="post">
+    {% csrf_token %}
+    <!-- {{ form.as_p }} -->
+    <!-- fields = ['date', 'box', 'no_of_box', 'from_location', 'to_location'] -->
+
+    <div>
+        {{ form.location.label_tag }}
+        {{ form.location }}
+    </div>
+    <div>
+        <label for="id_q_per_box">Quantity per Box:</label>
+        {{ form.q_per_box }}
+    </div>
+    <div>
+        <label for="id_quantity">Quantity of Boxes:</label>
+        <!-- {{ form.quantity.label_tag }} -->
+        {{ form.no_of_box }}
+    </div>
+
+    <!-- <div>
+        {{ form.product.label_tag }}
+        <select name="{{ form.product.name }}">
+            {% for choice in form.product.field.queryset %}
+                <option value="{{ choice.pk }}">{{ choice.product}}</option>
+            {% endfor %}
+        </select>
+    </div> -->
+
+    <div>
+        {{ form.product.label_tag }}
+        <select name="{{ form.product.name }}">
+            {% for product in form.product.field.queryset %}
+                <option value="{{ product.pk }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success">Update Box Inventory</button>
+</form>
+{% endblock %}

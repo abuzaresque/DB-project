@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Open Inventory Management{% endblock %}
+
+{% block content %}
+<h2>Manage Open Inventory</h2>
+<form method="post">
+    {% csrf_token %}
+    <!-- {{ form.as_p }}-->
+    <!-- fields = ['product', 'quantity', 'location'] -->
+
+    <div>
+        {{ form.product.label_tag }}
+        <select name="{{ form.product.name }}">
+            {% for product in form.product.field.queryset %}
+                <option value="{{ product.pk }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="id_q_per_box">Quantity:</label>
+        <!-- {{ form.q_per_box.label_tag }} -->
+        {{ form.quantity }}
+    </div>
+    <div>
+        {{ form.location.label_tag }}
+        {{ form.location }}
+    </div>
+
+    <button type="submit" class="btn btn-success">Update Open Inventory</button>
+</form>
+{% endblock %}

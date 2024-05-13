@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Container Management{% endblock %}
+
+<!-- {{ form.as_p }} -->
+<!-- fields = [ 'date', 'box', 'no_of_box', 'from_location', 'to_location'] -->
+{% block content %}
+<h2>Manage Container</h2>
+<form id="container_form" method="post" action="{% url 'container' %}">
+
+    {% csrf_token %}
+
+    <div>
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date">
+    </div>
+    <div>
+        <label for="from_location">From Location:</label>
+        <select name="from_location" id="from_location">
+            {% for location in locations %}
+            <option value="{{ location.location_name }}">{{ location.location_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="to_location">To Location:</label>
+        <input type="text" name="to_location" id="to_location">
+    </div>
+    <div>
+        <label for="box">Boxes:</label>
+        <select name="box" id="box" multiple></select>
+    </div>
+    <div>
+        <label for="no_of_box">Number of Boxes:</label>
+        <input type="number" name="no_of_box" id="no_of_box">
+    </div>
+
+
+    <button type="submit" class="btn btn-success">Save Container</button>
+</form>
+
+
+
+<script>
+    // Add event listener to 'from_location' field to dynamically update 'box_id' options
+    const locationField = document.querySelector("#from_location");
+    const boxIdField = document.querySelector("#box");
+
+    locationField.addEventListener("change", function () {
+        var locationId = locationField.options[locationField.selectedIndex].text
+        console.log("this: ", this);
+        console.log("location: ", locationId);
+        fetch(`/api/get_boxes/?location_id=${locationId}`)
+            .then(response => response.json())
+            .then(data => {
+                boxIdField.innerHTML = "";  // Clear existing options
+                data.forEach(box => {
+                    // 'box_id': box.box_id,
+                    // 'product_name': box.product.name
+                    const option = document.createElement("option");
+                    option.value = box.box_id;
+                    option.textContent = `${box.box_id} - ${box.product_name}`;
+                    console.log(option.textContent);
+                    boxIdField.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching boxes:', error);
+            });
+    });
+
+</script>
+
+{% endblock %}

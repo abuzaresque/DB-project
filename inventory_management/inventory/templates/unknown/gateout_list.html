@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Gateout Transactions{% endblock %}
+
+{% block content %}
+<h2>Gateout Transactions</h2>
+<form method="get" action="">
+    <input type="text" name="q" placeholder="Search gateouts" aria-label="Search">
+    <button type="submit">Search</button>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Location</th>
+            <th>To</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for gateout in gateouts %}
+        <tr>
+            <td>{{ gateout.transaction_id }}</td>
+            <td>{{ gateout.product.product.name }}</td>
+            <td>{{ gateout.quantity }}</td>
+            <td>{{ gateout.location }}</td>
+            <td>{{ gateout.to }}</td>
+            <td>{{ gateout.date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

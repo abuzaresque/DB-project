@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Include CSS and JavaScript libraries (e.g., Chart.js, Leaflet.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    {% extends 'base.html' %}
+
+    {% block content %}
+
+
+    <h1>Dashboard</h1>
+
+    <div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Gateout ID</th>
+                    <th>Box/Product ID</th>
+                    <th>Gateout Date</th>
+                    <th>From Location</th>
+                    <th>To Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for gateout in recent_gateouts %}
+                <tr>
+                    <td>{{ gateout.id }}</td>
+                    <td>{% if gateout.box_id %}{{ gateout.box_id }}{% else %}{{ gateout.o_product_id }}{% endif %}</td>
+                    <td>{{ gateout.gateout_date }}</td>
+                    <td>{{ gateout.from_location_name.location_name }}</td>
+                    <td>{{ gateout.to_location }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h1>Product Sales Trends</h1>
+        <canvas id="salesChart" width="800" height="400"></canvas>
+
+        <script>
+            const oproductsData = {{ oproducts_data | safe }};
+            const bproductsData = {{ bproducts_data | safe }};
+
+            // Prepare the data for Chart.js
+            const labels = oproductsData.map(data => data.sale_date);
+            const oproductsSales = oproductsData.map(data => data.sales_count);
+            const bproductsSales = bproductsData.map(data => data.sales_count);
+
+            // Create the chart
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'OProducts Sales',
+                        data: oproductsData,
+                        borderColor: 'blue',
+                        borderWidth: 2
+                    }, {
+                        label: 'BProducts Sales',
+                        data: bproductsData,
+                        borderColor: 'red',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        </script>
+    </div>
+
+    <div>
+        <!-- Top Selling Products table -->
+    </div>
+
+    <div>
+        <!-- Geospatial Visualization map -->
+    </div>
+
+    <div>
+        <!-- Overall Performance Metrics -->
+    </div>
+
+    <!-- Include JavaScript code to populate data and create visualizations -->
+
+
+
+    {% endblock %}
+</body>
+
+</html>

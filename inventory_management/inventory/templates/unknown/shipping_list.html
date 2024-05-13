@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Shipping List{% endblock %}
+
+{% block content %}
+<h2>Shipping List</h2>
+<form method="get" action="">
+    <input type="text" name="q" placeholder="Search shipping records" aria-label="Search">
+    <button type="submit">Search</button>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Container ID</th>
+            <th>Timestamp</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shipping in shippings %}
+        <tr>
+            <td>{{ shipping.container.container_number }}</td>
+            <td>{{ shipping.timestamp }}</td>
+            <td>{{ shipping.latitude }}</td>
+            <td>{{ shipping.longitude }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
