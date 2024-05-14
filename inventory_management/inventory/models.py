@@ -5,7 +5,7 @@ class WarehouseLocation(models.Model):
 
 
 class Product(models.Model):
-    product_id = models.CharField(max_length=255, primary_key=True)
+    product_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     size = models.CharField(max_length=100)
     colour = models.CharField(max_length=100)
@@ -24,6 +24,8 @@ class OpenInventory(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     location = models.ForeignKey(WarehouseLocation, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.product.name} __ {self.location.location_name} __ {self.quantity}"
 
 class Gateout(models.Model):
     transaction_id = models.AutoField(primary_key=True)

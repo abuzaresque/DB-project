@@ -1,53 +1,87 @@
 {% extends 'base.html' %}
 
-{% block title %}Container Management{% endblock %}
+{% block title %}WareTrack{% endblock %}
 
-<!-- {{ form.as_p }} -->
-<!-- fields = [ 'date', 'box', 'no_of_box', 'from_location', 'to_location'] -->
 {% block content %}
-<h2>Manage Container</h2>
-<form id="container_form" method="post" action="{% url 'container' %}">
-
-    {% csrf_token %}
-
-    <div>
-        <label for="date">Date:</label>
-        <input type="date" name="date" id="date">
+<br><br><div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="border p-4">
+                <h3 class="text-center">Manage Container</h3><br>
+                <form id="container_form" method="post" action="{% url 'container' %}">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="date" class="col-md-3 col-form-label">Date</label>
+                        <div class="col-md-9">
+                            <input type="date" name="date" id="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="from_location" class="col-md-3 col-form-label">From</label>
+                        <div class="col-md-9">
+                            <select name="from_location" id="from_location" class="form-select">
+                                {% for location in locations %}
+                                <option value="{{ location.location_name }}">{{ location.location_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="to_location" class="col-md-3 col-form-label">To</label>
+                        <div class="col-md-9">
+                            <input type="text" name="to_location" id="to_location" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="box" class="col-md-3 col-form-label">Box</label>
+                        <div class="col-md-9">
+                            <select name="box" id="box" class="form-select"></select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="no_of_box" class="col-md-3 col-form-label">Quantity</label>
+                        <div class="col-md-9">
+                            <input type="number" name="no_of_box" id="no_of_box" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <button type="submit" class="btn btn-primary full-width-btn">Save Container</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="from_location">From Location:</label>
-        <select name="from_location" id="from_location">
-            {% for location in locations %}
-            <option value="{{ location.location_name }}">{{ location.location_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div>
-        <label for="to_location">To Location:</label>
-        <input type="text" name="to_location" id="to_location">
-    </div>
-    <div>
-        <label for="box">Boxes:</label>
-        <select name="box" id="box" multiple></select>
-    </div>
-    <div>
-        <label for="no_of_box">Number of Boxes:</label>
-        <input type="number" name="no_of_box" id="no_of_box">
-    </div>
-
-
-    <button type="submit" class="btn btn-success">Save Container</button>
-</form>
-
-
-
+</div>
+</div>
+<style>
+    /* Custom CSS to ensure full width button */
+    .full-width-btn {
+        width: 100%;
+    }
+    select,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+        width: 100%; /* Set width to 100% */
+        height: 40px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+</style>
 <script>
     // Add event listener to 'from_location' field to dynamically update 'box_id' options
     const locationField = document.querySelector("#from_location");
     const boxIdField = document.querySelector("#box");
 
     locationField.addEventListener("change", function () {
-        var locationId = locationField.options[locationField.selectedIndex].text
+        var locationId = locationField.options[locationField.selectedIndex].text;
         console.log("this: ", this);
         console.log("location: ", locationId);
         fetch(`/api/get_boxes/?location_id=${locationId}`)
@@ -55,8 +89,6 @@
             .then(data => {
                 boxIdField.innerHTML = "";  // Clear existing options
                 data.forEach(box => {
-                    // 'box_id': box.box_id,
-                    // 'product_name': box.product.name
                     const option = document.createElement("option");
                     option.value = box.box_id;
                     option.textContent = `${box.box_id} - ${box.product_name}`;

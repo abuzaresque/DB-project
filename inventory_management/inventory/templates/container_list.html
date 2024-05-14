@@ -1,35 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}Container List{% endblock %}
+{% block title %}WareTrack{% endblock %}
 
 {% block content %}
-<h2>Container List</h2>
-<form method="get" action="">
-    <input type="text" name="q" placeholder="Search containers" aria-label="Search">
-    <button type="submit">Search</button>
-</form>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Container Number</th>
-            <th>Date</th>
-            <th>Box ID</th>
-            <th>No of Boxes</th>
-            <th>From Location</th>
-            <th>To Location</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for container in containers %}
-        <tr>
-            <td>{{ container.container_number }}</td>
-            <td>{{ container.date }}</td>
-            <td>{{ container.box.box_id }}</td>
-            <td>{{ container.no_of_box }}</td>
-            <td>{{ container.from_location }}</td>
-            <td>{{ container.to_location }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <br>
+    <h3>Container List</h3>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" action="" class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Search containers" aria-label="Search">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Container Number</th>
+                <th>Date</th>
+                <th>Box ID</th>
+                <th>No of Boxes</th>
+                <th>From Location</th>
+                <th>To Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for container in containers %}
+            <tr>
+                <td>{{ container.container_number }}</td>
+                <td>{{ container.date }}</td>
+                <td>{{ container.box.box_id }}</td>
+                <td>{{ container.no_of_box }}</td>
+                <td>{{ container.from_location }}</td>
+                <td>{{ container.to_location }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

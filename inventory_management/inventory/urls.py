@@ -7,21 +7,21 @@ from .views import (
     gateout_view, gateout_list,
     container_view, container_list,
     shipping_view, shipping_list,
-    location, location_view, location_list, get_boxes
+    location, warehouse_view, warehouse_list, get_boxes,
 )
     
 urlpatterns = [
 
     path('', dashboard, name='dashboard'),
-    path('dashboard', dashboard, name='dashboard'),
+    path('dashboard/', dashboard, name='dashboard'),
 
     # Product URLs
     path('product/', product_view, name='product'),
     path('products/', product_list, name='product_list'),
 
 
-    path('locations/', location_view, name='location'),
-    # path('locations/', location_list, name='location_list'),
+    path('warehouse/', warehouse_view, name='warehouse'),
+    path('warehouse_list/', warehouse_list, name='warehouse_list'),
 
     # Box Inventory URLs
     path('box_inventory/', box_inventory_view, name='box_inventory'),
@@ -43,6 +43,8 @@ urlpatterns = [
     # Shipping URLs
     path('shipping/', shipping_view, name='shipping'),
     path('shipping_list/', shipping_list, name='shipping_list'),
+    path('shipping_tracking/', location, name='shipping_tracking'),
 
     path('location/', location, name='location'),
+
 ]

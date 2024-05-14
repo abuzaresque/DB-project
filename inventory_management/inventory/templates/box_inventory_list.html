@@ -1,32 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Box Inventory List</h2>
-<form method="get" action="">
-    <input type="text" name="q" placeholder="Search by product name..." aria-label="Search Box Inventory">
-    <button type="submit" class="btn btn-primary">Search</button>
-    
-</form>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Box ID</th>
-            <th>Product Name</th>
-            <th>Quantity per Box</th>
-            <th>Number of Boxes</th>
-            <th>Location</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for box in boxes %}
-        <tr>
-            <td>{{ box.box_id }}</td>
-            <td>{{ box.product.name }}</td>
-            <td>{{ box.q_per_box }}</td>
-            <td>{{ box.no_of_box }}</td>
-            <td>{{ box.location.location_name }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container">
+    <br>
+    <h3>Box Inventory List</h3>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" action="" class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Search by product name..." aria-label="Search Box Inventory">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Box ID</th>
+                <th>Product Name</th>
+                <th>Quantity per Box</th>
+                <th>Number of Boxes</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for box in boxes %}
+            <tr>
+                <td>{{ box.box_id }}</td>
+                <td>{{ box.product.name }}</td>
+                <td>{{ box.q_per_box }}</td>
+                <td>{{ box.no_of_box }}</td>
+                <td>{{ box.location.location_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

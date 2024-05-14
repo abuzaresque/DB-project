@@ -1,12 +1,63 @@
 {% extends 'base.html' %}
 
-{% block title %}Gateout Operations{% endblock %}
+{% block title %}WareTrack{% endblock %}
 
 {% block content %}
-<h2>Gateout Operation</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Process Gateout</button>
-</form>
+<br><br><div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="border p-4">
+                <h3 class="text-center">Gateout Operation</h3><br>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-3">{{ form.product.label_tag }}</div>
+                        <div class="col-md-9">
+                            <select name="{{ form.product.name }}" class="form-select">
+                                {% for product in form.product.field.queryset %}
+                                    <option value="{{ product.pk }}">{{ product }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">{{ form.quantity.label_tag }}</div>
+                        <div class="col-md-9">{{ form.quantity }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">{{ form.to.label_tag }}</div>
+                        <div class="col-md-9">{{ form.to }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">{{ form.date.label_tag }}</div>
+                        <div class="col-md-9">{{ form.date }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width-btn">Process Gateout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Custom CSS to ensure full width button */
+    .full-width-btn {
+        width: 100%;
+    }
+    select,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+        width: 100%; /* Set width to 100% */
+        height: 40px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+</style>
 {% endblock %}

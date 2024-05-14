@@ -1,48 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}Box Inventory Management{% endblock %}
+{% block title %}WareTrack{% endblock %}
 
 {% block content %}
-<h2>Manage Box Inventory</h2>
-<form method="post">
-    {% csrf_token %}
-    <!-- {{ form.as_p }} -->
-    <!-- fields = ['date', 'box', 'no_of_box', 'from_location', 'to_location'] -->
+<br><br><div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="border p-4">
+                <h3 class="text-center">Manage Box Inventory</h3>
+                <br>
+                <form method="post">
+                    {% csrf_token %}
 
-    <div>
-        {{ form.location.label_tag }}
-        {{ form.location }}
+                    <div class="mb-3 d-flex flex-column">
+                        <label for="id_location" class="form-label">{{ form.location.label }}</label>
+                        {{ form.location }}
+                    </div>
+                    <div class="mb-3 d-flex flex-column">
+                        <label for="id_q_per_box" class="form-label">Quantity per Box:</label>
+                        {{ form.q_per_box }}
+                    </div>
+                    <div class="mb-3 d-flex flex-column">
+                        <label for="id_no_of_box" class="form-label">Quantity of Boxes:</label>
+                        {{ form.no_of_box }}
+                    </div>
+
+                    <div class="mb-3 d-flex flex-column">
+                        <label for="id_product" class="form-label">{{ form.product.label }}</label>
+                        <select name="{{ form.product.name }}" class="form-select">
+                            {% for product in form.product.field.queryset %}
+                                <option value="{{ product.pk }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary full-width-btn">Update Box Inventory</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="id_q_per_box">Quantity per Box:</label>
-        {{ form.q_per_box }}
-    </div>
-    <div>
-        <label for="id_quantity">Quantity of Boxes:</label>
-        <!-- {{ form.quantity.label_tag }} -->
-        {{ form.no_of_box }}
-    </div>
-
-    <!-- <div>
-        {{ form.product.label_tag }}
-        <select name="{{ form.product.name }}">
-            {% for choice in form.product.field.queryset %}
-                <option value="{{ choice.pk }}">{{ choice.product}}</option>
-            {% endfor %}
-        </select>
-    </div> -->
-
-    <div>
-        {{ form.product.label_tag }}
-        <select name="{{ form.product.name }}">
-            {% for product in form.product.field.queryset %}
-                <option value="{{ product.pk }}">{{ product.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-
-
-    <button type="submit" class="btn btn-success">Update Box Inventory</button>
-</form>
+</div>
+<style>
+    /* Custom CSS for vertical alignment */
+    .flex-column {
+        flex-direction: column;
+    }
+    .full-width-btn {
+        width: 100%;
+    }
+    input[type="text"],
+    textarea {
+        width: 100%;
+        height: 40px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+</style>
 {% endblock %}

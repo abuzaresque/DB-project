@@ -4,56 +4,59 @@ from .forms import ProductForm, BoxInventoryForm, OpenInventoryForm, GateoutForm
 from django.utils import timezone
 from django.http import HttpResponse
 
+from django.db.models import Count, Sum
+
+
+import plotly.graph_objs as go
+from plotly.offline import plot
+
 def dashboard(request):
-    # Query the database to retrieve the five most recent gateouts
-    recent_bgateouts = (BGateout.objects.annotate(max_date=Max('gateout_date'))
-                        .values('b_gateout_id', 'box_id', 'gateout_date', 'from_location__location_name', 'to_location')
-                        .order_by('-max_date')[:5])
-    recent_ogateouts = (OGateout.objects.annotate(max_date=Max('gateout_date'))
-                        .values('o_gateout_id', 'o_product_id', 'gateout_date', 'from_location__location_name', 'to_location')
-                        .order_by('-max_date')[:5])
+    total_products = Product.objects.count()
+    total_open_inventory = OpenInventory.objects.count()
+    total_gateouts = Gateout.objects.count()
+    total_containers = Container.objects.count()
+    total_shipments = Shipping.objects.count()
 
-    recent_gateouts = list(recent_bgateouts) + list(recent_ogateouts)
+    # Calculate product distribution based on quantities in open inventory
+    product_distribution = OpenInventory.objects.values('product__name').annotate(total_quantity=Sum('quantity'))
 
+    # Extract product names and their respective total quantities
+    product_names = [item['product__name'] for item in product_distribution]
+    total_quantities = [item['total_quantity'] for item in product_distribution]
 
-        # Query OProducts sales data
-    oproducts_sales = (OGateout.objects.select_related('o_product_id')
-                       .annotate(sale_date=TruncDay('gateout_date'))
-                       .values('sale_date')
-                       .annotate(sales_count=Count('o_product_id'))
-                       .order_by('sale_date'))
+    # Create a bar chart using Plotly
+    fig = go.Figure(data=[go.Bar(x=product_names, y=total_quantities, width= 0.25)])
+    fig.update_layout(title='Product Distribution based on Quantities in Open Inventory',
+                      xaxis_title='Product',
+                      yaxis_title='Total Quantity')
     
-    # Query BProducts sales data
-    bproducts_sales = (BGateout.objects.select_related('box_id__b_product_id')
-                       .annotate(sale_date=TruncDay('gateout_date'))
-                       .values('sale_date')
-                       .annotate(sales_count=Count('box_id__b_product_id'))
-                       .order_by('sale_date'))
+    # Convert the figure to HTML to embed in the template
+    chart_html = plot(fig, output_type='div')
 
-    # Prepare the data for Chart.js
-    oproducts_data = [{'sale_date': data['sale_date'].strftime('%Y-%m-%d'), 'sales_count': data['sales_count']} for data in oproducts_sales]
-    bproducts_data = [{'sale_date': data['sale_date'].strftime('%Y-%m-%d'), 'sales_count': data['sales_count']} for data in bproducts_sales]
-
-    sidebar_closed = False  # Set this variable based on your conditions
-    context = {
-        'recent_gateouts': recent_gateouts,
-        'oproducts_data': oproducts_data,
-        'bproducts_data': bproducts_data,
-        'sidebar_closed': sidebar_closed
-    }
-
-    return render(request, 'dashboard.html', context)
+    return render(request, 'dashboard.html', {
+        'total_products': total_products,
+        'total_open_inventory': total_open_inventory,
+        'total_gateouts': total_gateouts,
+        'total_containers': total_containers,
+        'total_shipments': total_shipments,
+        'product_distribution': product_distribution,
+        'chart_html': chart_html,
+    })
 
 
-def location_view(request):
+
+
+
+
+def warehouse_view(request):
     if request.method == 'POST':
         form = LocationForm(request.POST)
         if form.is_valid():
             form.save()
-            form = redirect('location')  # Redirect to a page showing the list of locations
+            form = redirect('warehouse_list')  # Redirect to a page showing the list of locations
     else:
         form = LocationForm()
-    return render(request, 'location.html', {'form': form})
+    return render(request, 'warehouse_form.html', {'form': form})
 
 # View for adding/editing products
 def product_view(request):
@@ -175,9 +178,6 @@ def get_boxes(request):
 
     return JsonResponse(data, safe=False)
 
-
-
-
 # View for managing shipping details
 def shipping_view(request):
     if request.method == 'POST':
@@ -189,10 +189,10 @@ def shipping_view(request):
         form = ShippingForm()
     return render(request, 'shipping_form.html', {'form': form})
 
-def location_list(request):
+def warehouse_list(request):
     query = request.GET.get('q', '')
-    locations = WarehouseLocation.objects.filter(name__icontains=query)
-    return render(request, 'location_list.html', {'locations': locations})
+    locations = WarehouseLocation.objects.filter(location_name__icontains=query)
+    return render(request, 'warehouse_list.html', {'locations': locations})
 
 def product_list(request):
     query = request.GET.get('q', '')
@@ -222,8 +222,8 @@ def container_list(request):
 
 def shipping_list(request):
     query = request.GET.get('q', '')
-    shippings = Shipping.objects.filter(container__container_number__icontains=query)
-    return render(request, 'shipping_list.html', {'shippings': shippings})
+    shipments = Shipping.objects.filter(container__container_number__icontains=query)
+    return render(request, 'shipping_list.html', {'shipments': shipments})
 
 
 import json
@@ -237,11 +237,12 @@ YOUR_RECEIVED_LONGITUDEa = 0
 def location(request):
     if request.method == 'POST':
         try:
+            print("connection established")
             data = json.loads(request.body.decode('utf-8'))
             latitude = data.get('latitude')
             longitude = data.get('longitude')
             # con
-            container = Container.objects.get(container_number = 2)
+            container = Container.objects.get(container_number = 4)
 
 
             shipping = Shipping.objects.create(
@@ -264,7 +265,8 @@ def location(request):
         
     elif request.method == 'GET':
         # Retrieve the latest shipping record from the database
-        latest_shipping = Shipping.objects.order_by('-timestamp').first()
+        latest_shipping = Shipping.objects.order_by('-timestamp').last()
+        print(latest_shipping)
 
         if latest_shipping:
             latitude = latest_shipping.latitude
@@ -274,48 +276,16 @@ def location(request):
                 'latitude': latitude,
                 'longitude': longitude,
             }
-            return render(request, 'shipping_list.html', context)
+            return render(request, 'shipping_tracking.html', context)
         else:
             # If no shipping records exist, provide default coordinates
             context = {
                 'latitude': 0.0,
                 'longitude': 0.0,
             }
-            return render(request, 'shipping_list.html', context)
-    return render(request, 'shipping_list.html', context)
+            return render(request, 'shipping_tracking.html', context)
+    return render(request, 'shipping_tracking.html', context)
     
 
 
-# def show_map(request):
-#     latitude = YOUR_RECEIVED_LATITUDE  # Replace with actual latitude received from React Native
-#     longitude = YOUR_RECEIVED_LONGITUDE  # Replace with actual longitude received from React Native
-#     context = {
-#         'latitude': latitude,
-#         'longitude': longitude,
-#     }
-#     return render(request, 'maps.html', context)
-
-
-# def show_map(request):
-#     if request.method == 'GET':
-#         # Retrieve the latest shipping record from the database
-#         latest_shipping = Shipping.objects.order_by('-timestamp').first()
-
-#         if latest_shipping:
-#             latitude = latest_shipping.latitude
-#             longitude = latest_shipping.longitude
-
-#             context = {
-#                 'latitude': latitude,
-#                 'longitude': longitude,
-#             }
-#             return render(request, 'maps.html', context)
-#         else:
-#             # If no shipping records exist, provide default coordinates
-#             context = {
-#                 'latitude': 0.0,
-#                 'longitude': 0.0,
-#             }
-#             return render(request, 'maps.html', context)
-#     else:
-#         return JsonResponse({'error': 'Method not allowed'}, status=405)
+from .models import Product, BoxInventory, OpenInventory, Gateout

@@ -1,115 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <!-- Include CSS and JavaScript libraries (e.g., Chart.js, Leaflet.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+{% block title %}WareTrack{% endblock %}
 
-<body>
-
-    {% extends 'base.html' %}
-
-    {% block content %}
-
-
-    <h1>Dashboard</h1>
-
+{% block content %}
+<div class="container">
+    <br>
+    <h1>Dashboard</h2>
+    <br>
+    <br>
+    <br>
+    <h3>Product Distribution</h3>
     <div>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Gateout ID</th>
-                    <th>Box/Product ID</th>
-                    <th>Gateout Date</th>
-                    <th>From Location</th>
-                    <th>To Location</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for gateout in recent_gateouts %}
-                <tr>
-                    <td>{{ gateout.id }}</td>
-                    <td>{% if gateout.box_id %}{{ gateout.box_id }}{% else %}{{ gateout.o_product_id }}{% endif %}</td>
-                    <td>{{ gateout.gateout_date }}</td>
-                    <td>{{ gateout.from_location_name.location_name }}</td>
-                    <td>{{ gateout.to_location }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {{ chart_html|safe }}
     </div>
-
-    <div>
-        <h1>Product Sales Trends</h1>
-        <canvas id="salesChart" width="800" height="400"></canvas>
-
-        <script>
-            const oproductsData = {{ oproducts_data | safe }};
-            const bproductsData = {{ bproducts_data | safe }};
-
-            // Prepare the data for Chart.js
-            const labels = oproductsData.map(data => data.sale_date);
-            const oproductsSales = oproductsData.map(data => data.sales_count);
-            const bproductsSales = bproductsData.map(data => data.sales_count);
-
-            // Create the chart
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            const salesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'OProducts Sales',
-                        data: oproductsData,
-                        borderColor: 'blue',
-                        borderWidth: 2
-                    }, {
-                        label: 'BProducts Sales',
-                        data: bproductsData,
-                        borderColor: 'red',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        xAxes: [{
-                            type: 'time',
-                            time: {
-                                unit: 'day'
-                            }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
-                }
-            });
-        </script>
+    <br>
+    <h3>Analytics</h3>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Products</h5>
+                    <p class="card-text">{{ total_products }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Open Inventory</h5>
+                    <p class="card-text">{{ total_open_inventory }}</p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <!-- Top Selling Products table -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Gateouts</h5>
+                    <p class="card-text">{{ total_gateouts }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Containers</h5>
+                    <p class="card-text">{{ total_containers }}</p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <!-- Geospatial Visualization map -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Shipments</h5>
+                    <p class="card-text">{{ total_shipments }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Product Distribution in Open Inventory</h5>
+                    <ul class="list-group">
+                        {% for item in product_distribution %}
+                        <li class="list-group-item">{{ item.product__name }}: {{ item.total_quantity }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div>
-        <!-- Overall Performance Metrics -->
-    </div>
-
-    <!-- Include JavaScript code to populate data and create visualizations -->
-
-
-
-    {% endblock %}
-</body>
-
-</html>
+</div>
+<br>
+{% endblock %}

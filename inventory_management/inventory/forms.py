@@ -9,7 +9,7 @@ class LocationForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['product_id', 'name', 'size', 'colour', 'detail']
+        fields = [ 'name', 'size', 'colour', 'detail']
 
 class BoxInventoryForm(forms.ModelForm):
     class Meta:
@@ -42,12 +42,20 @@ class GateoutForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(GateoutForm, self).__init__(*args, **kwargs)
         # Customize the product field queryset to include OpenInventory instances
+        # open_inventory_options = OpenInventory.objects.all()
+        # self.fields['product'].queryset = open_inventory_options
+
+        # # Customize the product field choices to display OpenInventory attributes
+        # self.fields['product'].widget.choices = [
+        #     (open_inventory.open_inventory_id, f"{open_inventory.product.name} - {open_inventory.location.location_name} - {open_inventory.quantity}")
+        #     for open_inventory in open_inventory_options
+        # ]
         open_inventory_options = OpenInventory.objects.all()
         self.fields['product'].queryset = open_inventory_options
 
         # Customize the product field choices to display OpenInventory attributes
         self.fields['product'].widget.choices = [
-            (open_inventory.open_inventory_id, f"{open_inventory.product.name} - {open_inventory.location.location_name} - {open_inventory.quantity}")
+            (open_inventory.pk, f"{open_inventory.product.name} - {open_inventory.location.location_name} - {open_inventory.quantity}")
             for open_inventory in open_inventory_options
         ]
     

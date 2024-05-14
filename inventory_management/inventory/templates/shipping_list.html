@@ -1,48 +1,40 @@
-<!-- maps.html -->
 {% extends 'base.html' %}
 
-{% block title %}Add/Edit Product{% endblock %}
+{% block title %}WareTrack{% endblock %}
 
 {% block content %}
-
-<head>
-    <title>Google Maps Integration</title>
-    <!-- Include Google Maps JavaScript API with your API key -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjbxrNpaKSQLn7asvGHLhhNw41GY39CJw"></script>
-    <style>
-        /* Set map container size */
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-    <!-- Map container -->
-    <div id="map"></div>
-
-    <script>
-        function initMap() {
-            // Coordinates received from Django view
-            var latitude = {{ latitude }};
-            var longitude = {{ longitude }};
-
-            // Create a new map centered at the specified coordinates
-            var map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: latitude, lng: longitude },
-                zoom: 15 // Adjust the zoom level as needed
-            });
-
-            // Create a marker at the specified coordinates
-            var marker = new google.maps.Marker({
-                position: { lat: latitude, lng: longitude },
-                map: map,
-                title: 'Location' // Optional: Marker title
-            });
-        }
-
-        // Call initMap() to initialize the map when the page loads
-        window.onload = initMap;
-    </script>
-</body>
+<div class="container">
+    <br>
+    <h3>Shipping List</h3>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form method="get" action="" class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Search shipments by container number..." aria-label="Search">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Shipping ID</th>
+                <th>Container Number</th>
+                <th>Timestamp</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipment in shipments %}
+            <tr>
+                <td>{{ shipment.shipping_id }}</td>
+                <td>{{ shipment.container.container_number }}</td>
+                <td>{{ shipment.timestamp }}</td>
+                <td>{{ shipment.latitude }}</td>
+                <td>{{ shipment.longitude }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

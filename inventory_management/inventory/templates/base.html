@@ -3,36 +3,171 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Inventory Management{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WareTrack{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Custom CSS for navbar */
+        .navbar {
+            background-color: #0d6efd !important; /* Ambient color */
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            margin-right: 2rem; /* Adjust the margin for spacing */
+        }
+
+        .navbar-nav .nav-link {
+            padding-left: 2rem; /* Adjust the padding for spacing */
+            padding-right: 1rem; /* Adjust the padding for spacing */
+            font-size: 0.9rem;
+            color: #ffffff; /* Text color */
+        }
+
+        .navbar-nav .nav-item {
+            flex: 1; /* Equal spacing for navbar items */
+            text-align: center; /* Center align navbar items */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f8f9fa; /* Hover text color */
+        }
+
+        /* Custom CSS for dropdown */
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu .dropdown-menu {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            margin-top: 0;
+            font-size: 0.8rem;
+            margin-left: 0.1rem; /* Adjust the margin for spacing */
+        }
+        .dropdown-menu {
+            font-size: 0.9rem; /* Decrease font size for primary dropdown menu */
+        }
+    </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">InventoryApp</a>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-link" href="{% url 'product_list' %}">Products</a>
-                    <a class="nav-link" href="{% url 'product' %}">Add Product</a>
-                    <a class="nav-link" href="{% url 'box_inventory_list' %}">Box Inventory</a>
-                    <a class="nav-link" href="{% url 'box_inventory' %}">Add Box</a>
-                    <a class="nav-link" href="{% url 'open_inventory_list' %}">Open Inventory</a>
-                    <a class="nav-link" href="{% url 'open_inventory' %}">Add Open Inventory</a>
-                    <a class="nav-link" href="{% url 'gateout_list' %}">Gateout</a>
-                    <a class="nav-link" href="{% url 'gateout' %}">Add Gateout</a>
-                    <a class="nav-link" href="{% url 'container_list' %}">Containers</a>
-                    <a class="nav-link" href="{% url 'container' %}">Add Containers</a>
-                    <a class="nav-link" href="{% url 'shipping_list' %}">Shipping</a>
-                    <a class="nav-link" href="{% url 'shipping' %}">Add Shipping</a>
-                    
-                </div>
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                WareTrack
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProducts" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Products
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownProducts">
+                            <li><a class="dropdown-item" href="{% url 'product' %}">Add Product</a></li>
+                            <li><a class="dropdown-item" href="{% url 'product_list' %}">Product List</a></li>
+                        </ul>
+                    </li>
+                    <!-- Warehouse Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownWarehouse" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Warehouses
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownWarehouse">
+                            <li><a class="dropdown-item" href="{% url 'warehouse' %}">Add Warehouse</a></li>
+                            <li><a class="dropdown-item" href="{% url 'warehouse_list' %}">Warehouse List</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInventory" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Inventory
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownInventory">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#" id="navbarDropdownAddInventory"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Add Inventory
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownAddInventory">
+                                    <li><a class="dropdown-item" href="{% url 'box_inventory' %}">Add Box</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'open_inventory' %}">Add Open
+                                            Inventory</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#" id="navbarDropdownDisplayInventory"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Display Inventory
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownDisplayInventory">
+                                    <li><a class="dropdown-item" href="{% url 'box_inventory_list' %}">Box Inventory
+                                            List</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'open_inventory_list' %}">Open Inventory
+                                            List</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownGateout" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Gateout
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownGateout">
+                            <li><a class="dropdown-item" href="{% url 'gateout' %}">Add Gateout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'gateout_list' %}">Gateout List</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownContainer" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Container
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownContainer">
+                            <li><a class="dropdown-item" href="{% url 'container' %}">Add Container</a></li>
+                            <li><a class="dropdown-item" href="{% url 'container_list' %}">Container List</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownShipping" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Shipping
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownShipping">
+                            <li><a class="dropdown-item" href="{% url 'shipping' %}">Add Shipping</a></li>
+                            <li><a class="dropdown-item" href="{% url 'shipping_list' %}">Shipping List</a></li>
+                            <!-- Add Track Shipping Option -->
+                            <li><a class="dropdown-item" href="{% url 'shipping_tracking' %}">Track Shipping</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
+
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
+    <script>
+        // Prevent dropdown from closing when clicking on a submenu item
+        document.querySelectorAll('.dropdown-menu').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
